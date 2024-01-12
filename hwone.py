@@ -16,12 +16,17 @@ y = odeint(func, y0, t)
 
 #my code for solving ODE
 y_euler = []
-h = 0.00001
+h = 0.001
 for i in t:
     y_euler.append(Euler(t0, y0, h, i, func))
 
 #visuals
-plt.plot(t, y, label = "scipy")
-plt.plot(t, y_euler, label = "euler")
-plt.legend()
+plt.plot(t, y, label = "scipy", linewidth = 5)
+plt.plot(t, y_euler, label = "euler", color = 'r', linewidth = 5, alpha = 0.5)
+plt.xlabel("t", fontsize = 12)
+plt.ylabel("z", fontsize = 12)
+plt.xticks(fontsize = 12) 
+plt.yticks(fontsize = 12) 
+plt.legend(fontsize = 12)
+plt.savefig("Figures/hw_one_figures/euler.png", bbox_inches='tight')
 plt.show()
