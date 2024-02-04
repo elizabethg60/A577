@@ -49,10 +49,17 @@ def velocity(cur_v, delta_v, delta_time):
 def position(cur_r, cur_v, delta_time):
     return np.array(cur_r) + np.array(cur_v*delta_time)
 
-e_pos = [np.array([1,0])]
-e_vel = [np.array([-1,1])]
-s_pos = [np.array([0.1,0])]
-s_vel = [np.array([-0.1,0.1])]
+time = np.arange(0, 365*86400, 1*86400)
+au_cm = 1.496*10**13 #cm in 1 au
+vel = 2980000 #vel of earth in cm/s
+mass_sun = 1.99*10**33 #cgs
+mass_earth = 5.97*10**27
+
+e_pos = [np.array([au_cm,0])] 
+e_vel = [np.array([0, vel])]
+s_pos = [np.array([-(mass_earth*au_cm)/mass_sun,0])]
+s_vel = [np.array([0,-(mass_earth*vel)/mass_sun])]
+
 for i in range(0, len(time)):
     e_pos.append(position(e_pos[i], e_vel[i], 1))
     e_vel.append(velocity(e_vel[i], 0, i))
@@ -67,20 +74,20 @@ plt.legend()
 plt.savefig("Figures/hw_two_figures/2c.png", bbox_inches = "tight")
 plt.show()
 
-plt.plot(time, list(list(zip(*e_pos))[0])[0:-1], label = "xEarth")
-plt.plot(time, list(list(zip(*s_pos))[0])[0:-1], label = "xSun")
-plt.plot(time, list(list(zip(*e_pos))[1])[0:-1], label = "yEarth")
-plt.plot(time, list(list(zip(*s_pos))[1])[0:-1], label = "ySun")
+plt.plot(time, list(list(zip(*e_pos))[0])[0:-1], color = 'r', label = "xEarth")
+plt.scatter(time, list(list(zip(*s_pos))[0])[0:-1], color = 'g', s = 50, label = "xSun")
+plt.scatter(time, list(list(zip(*e_pos))[1])[0:-1], color = 'b', s = 10, label = "yEarth")
+plt.plot(time, list(list(zip(*s_pos))[1])[0:-1], color = 'k', label = "ySun")
 plt.xlabel("time")
 plt.ylabel("equation of motion position variables")
 plt.legend()
 plt.savefig("Figures/hw_two_figures/2ci.png", bbox_inches = "tight")
 plt.show()
 
-plt.plot(time, list(list(zip(*e_vel))[0])[0:-1], label = "Vx, Earth")
-plt.plot(time, list(list(zip(*s_vel))[0])[0:-1], label = "Vx, Sun")
-plt.plot(time, list(list(zip(*e_vel))[1])[0:-1], label = "Vy, Earth")
-plt.plot(time, list(list(zip(*s_vel))[1])[0:-1], label = "Vy, Sun")
+plt.scatter(time, list(list(zip(*e_vel))[0])[0:-1], color = 'r', s = 50, label = "Vx, Earth")
+plt.scatter(time, list(list(zip(*s_vel))[0])[0:-1], color = 'g', label = "Vx, Sun")
+plt.scatter(time, list(list(zip(*e_vel))[1])[0:-1], color = 'b', label = "Vy, Earth")
+plt.plot(time, list(list(zip(*s_vel))[1])[0:-1], color = 'k', label = "Vy, Sun")
 plt.xlabel("time")
 plt.ylabel("equation of motion velocity variables")
 plt.legend()
