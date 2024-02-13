@@ -26,9 +26,8 @@ def acceleration(i_r, j_r, mass):
     return -((G*mass*(i_r - j_r))/((((i_r[0] - j_r[0])**2) + ((i_r[1] - j_r[1])**2))**(3/2)))
 
 def energy(e_pos, e_vel, s_pos, s_vel):
-    return -((G*mass_sun*mass_earth)/(np.abs(np.linalg.norm(e_pos) - np.linalg.norm(s_pos)))) \
-    + 0.5*(mass_earth)*((np.linalg.norm(e_vel))**2) + 0.5*(mass_sun)*((np.linalg.norm(s_vel))**2) \
-    + 0.5*((2/5)*mass_earth*radius_earth**2)*((ang_v_earth)**2) + 0.5*((2/5)*mass_sun*radius_sun**2)*((ang_v_sun)**2)
+    return -((G*mass_sun*mass_earth)/(np.abs(np.linalg.norm(e_pos-s_pos)))) \
+    + 0.5*(mass_earth)*((np.linalg.norm(e_vel))**2) + 0.5*(mass_sun)*((np.linalg.norm(s_vel))**2)
 
 def momentum(mass, cur_r, cur_v):
     return mass*np.linalg.norm(cur_r)*np.linalg.norm(cur_v)
@@ -59,7 +58,8 @@ for step in step_arr:
     plt.savefig("Figures/hw_three_figures/2_step_{}.png".format(step), bbox_inches = "tight")
     plt.show()
 
-    if step == 0.1:
+step_arr = np.linspace(0.1, 1, 5)
+for step in step_arr:
         e_pos = [np.array([au_cm,0])] 
         e_vel = [np.array([0, vel])]
         s_pos = [np.array([-(mass_earth*au_cm)/mass_sun,0])]
@@ -73,26 +73,42 @@ for step in step_arr:
             s_pos.append(position(s_pos[i], s_vel[i], step*86400))
             s_vel.append(velocity(s_vel[i], acceleration(s_pos[i],e_pos[i], mass_earth), step*86400))
             energy_arr.append(energy(e_pos[i], e_vel[i], s_pos[i], s_vel[i]))
-            e_momentum.append(momentum(mass_earth, e_pos[i], e_vel[i]) + momentum(mass_sun, s_pos[i], s_vel[i]))
 
         diff_list_energy = []
         for x in range(0,len(energy_arr)):
             diff_list_energy.append((energy_arr[x] - energy_arr[0])/energy_arr[0])
 
+        plt.scatter((time/86400), diff_list_energy, label = "{} delta time".format(step))
+plt.xlabel("time (days)")
+plt.ylabel("energy")
+plt.title("relative change in energy")
+plt.legend()
+plt.savefig("Figures/hw_three_figures/2_energy.png", bbox_inches = "tight")
+plt.show()
+
+for step in step_arr:
+        e_pos = [np.array([au_cm,0])] 
+        e_vel = [np.array([0, vel])]
+        s_pos = [np.array([-(mass_earth*au_cm)/mass_sun,0])]
+        s_vel = [np.array([0,-(mass_earth*vel)/mass_sun])]
+
+        energy_arr = []
+        e_momentum = []
+        for i in range(0,len(time)):
+            e_pos.append(position(e_pos[i], e_vel[i], step*86400))
+            e_vel.append(velocity(e_vel[i], acceleration(e_pos[i],s_pos[i], mass_sun), step*86400))
+            s_pos.append(position(s_pos[i], s_vel[i], step*86400))
+            s_vel.append(velocity(s_vel[i], acceleration(s_pos[i],e_pos[i], mass_earth), step*86400))
+            e_momentum.append(momentum(mass_earth, e_pos[i], e_vel[i]) + momentum(mass_sun, s_pos[i], s_vel[i]))
+
         diff_list_mom = []
         for x in range(0,len(e_momentum)):
             diff_list_mom.append((e_momentum[x] - e_momentum[0])/e_momentum[0])
 
-        plt.scatter((time/86400), diff_list_energy, color = 'r')
-        plt.xlabel("time (days)")
-        plt.ylabel("energy")
-        plt.title('relative change in energy for Δt = {} days'.format(step))
-        plt.savefig("Figures/hw_three_figures/2_energy.png", bbox_inches = "tight")
-        plt.show()
-
-        plt.scatter((time/86400), diff_list_mom, color = 'r')
-        plt.xlabel("time (days)")
-        plt.ylabel("angular momentum")
-        plt.title('relative change in angular momentum Δt = {} days'.format(step))
-        plt.savefig("Figures/hw_three_figures/2_momentum", bbox_inches = "tight")
-        plt.show()
+        plt.scatter((time/86400), diff_list_mom, label = "{} delta time".format(step))
+plt.xlabel("time (days)")
+plt.ylabel("angular momentum")
+plt.title('relative change in angular momentum')
+plt.legend()
+plt.savefig("Figures/hw_three_figures/2_momentum", bbox_inches = "tight")
+plt.show()
