@@ -5,9 +5,6 @@ mass_sun = 1.99*10**33 #cgs
 mass_earth = 5.97*10**27
 mass_venus = 4.87*10**27
 total_mass = mass_sun + mass_earth + mass_venus
-radius_sun = 6.96*10**10
-radius_earth = 6.37*10**8
-radius_venus = 6.05*10**8
 G = 6.67*10**(-8)
 
 def position(cur_r, cur_v, delta_time):
