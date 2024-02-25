@@ -1,59 +1,51 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+
+"""
+2a) We can find the minimum by finding the t for which : g = dz/dt = 0
+Create an array of t and plot z vs. t.
+Hone in on the t nearest to the minimum. Refine your solution using ∆ t = - g (dg/dt)-1
+with multiple iterations until you reach a precise solution. 
+Add your more precise value for the t of the minimum as a labeled point on your plot and state it to several decimal places.
+"""
 
 def z(t):
-    return ((t-np.pi)**4 + np.sin(t) + 1)
+# returns z value for a given t
+    return (t-np.pi)**4 + np.sin(t) + 1
 
-def dzdt(t):
+def g(t):
+# returns g value for a given t
     return 4*(t-np.pi)**3 + np.cos(t)
 
 def dgdt(t):
+# returns dgdt for a given t
     return 12*(t-np.pi)**2 - np.sin(t)
 
 def delta_t(t):
-    return -dzdt(t)/dgdt(t)
+# returns delta t for a given t
+    return -g(t)/dgdt(t)
 
-# def D(func, x, h):
-# # computes the numerical derivative 
-#     return (func(x+h)-func(x))/h
-
-# h = 10**(-6) 
-# dxdt = []
-# for i in t:
-#     dxdt.append(D(z, i, h))
-
+#array of t values
 t = np.linspace(0, 6, 100)
 
-guess_time = t[int(len(t)/2)]
-guess_dzdt = dzdt(guess_time)
-tol = 10**(-8)
-while np.abs(0 - guess_dzdt) > tol:
-    guess_time = guess_time + delta_t(guess_time)
-    guess_dzdt = dzdt(guess_time)
+#iterate using delta t to find min of z func
+#initial guess
+min_t = t[int(len(t)/2)]
+min_value = g(min_t)
 
+tol = 10**(-4)
+while np.abs(min_value - 0) > tol:
+    min_t += delta_t(min_t)
+    min_value = g(min_t)
 
-# #determine t nearest to minimum 
-# closest_ind = 0
-# delta_min = np.abs(0 - dzdt(t[0]))
-# for i in range(1, len(t)):
-#     if np.abs(0 - dzdt(t[i])) < delta_min:
-#         delta_min = np.abs(0 - dzdt(t[i]))
-#         closest_ind = i
-
-# tol = 10**(-16)
-# guess = t[0]
-# min_guess = dzdt(guess)
-# while np.abs(0 - guess) > tol: 
-#     guess = guess + delta_t()
-
-
+#plot
 plt.plot(t, z(t), label = 'z')
-# plt.scatter(t, dxdt, label = 'dz')
-plt.scatter(guess_time, guess_dzdt)
-# plt.scatter(t[closest_ind], dzdt(t[closest_ind]))
-#plt.scatter(t, dzdt(t), label = 'dz/dt')
-# plt.scatter(t, dgdt(t), label = 'dg/dt')
+plt.scatter(min_t, min_value)
+plt.xlabel("t")
+plt.ylabel("z")
 plt.legend()
+plt.savefig("Figures/hw_six_figures/min_z.png", bbox_inches = "tight")
 plt.show()
 
-print(guess_time, guess_dzdt)
+print("min z occurs at t: {}".format(min_t))
+print("min z: {}".format(min_value))
